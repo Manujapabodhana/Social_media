@@ -3,8 +3,20 @@ import authRoutes from "./routes/auth.routes";
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
+// Routes
 app.use("/auth", authRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
 export default app;

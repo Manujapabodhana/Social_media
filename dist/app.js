@@ -4,14 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
-const post_routes_1 = __importDefault(require("./routes/post.routes"));
-const comment_routes_1 = __importDefault(require("./routes/comment.routes"));
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+// Middleware
 app.use(express_1.default.json());
-app.use('/auth', auth_routes_1.default);
-app.use('/posts', post_routes_1.default);
-app.use('/comments', comment_routes_1.default);
+// Health check endpoint
+app.get("/health", (req, res) => {
+    res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
+// Routes
+app.use("/auth", auth_routes_1.default);
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ message: "Route not found" });
+});
 exports.default = app;
