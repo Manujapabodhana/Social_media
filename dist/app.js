@@ -14,11 +14,8 @@ app.get("/health", (req, res) => {
     res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 // Routes
-console.log("Registering auth routes at /auth");
 app.use("/auth", auth_routes_1.default);
-console.log("Registering post routes at /posts");
 app.use("/posts", post_routes_1.default);
-console.log("Post routes registered successfully");
 // 404 handler
 app.use((req, res) => {
     res.status(404).json({ message: "Route not found" });

@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_controller_1 = require("../controllers/auth.controller");
+const auth_validation_1 = require("../middlewares/auth.validation");
 const router = (0, express_1.Router)();
-router.post("/register", auth_controller_1.register);
-router.post("/login", auth_controller_1.login);
+router.post("/register", auth_validation_1.registerValidation, auth_controller_1.register);
+router.post("/login", auth_validation_1.loginValidation, auth_controller_1.login);
+router.post("/refresh", auth_validation_1.refreshTokenValidation, auth_controller_1.refreshAccessToken);
 exports.default = router;

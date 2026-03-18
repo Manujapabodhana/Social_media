@@ -4,10 +4,6 @@ exports.getPosts = exports.createPost = void 0;
 const post_service_1 = require("../services/post.service");
 const createPost = async (req, res) => {
     try {
-        // Validate required fields
-        if (!req.body.title || !req.body.content) {
-            return res.status(400).json({ message: "Missing required fields: title and content" });
-        }
         const post = await (0, post_service_1.createPostService)(req.user.id, req.body.title, req.body.content);
         res.status(201).json({ message: "Post created successfully", post });
     }

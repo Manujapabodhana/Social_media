@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.registerUser = void 0;
+exports.findUserById = exports.loginUser = exports.registerUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const database_1 = require("../config/database");
 const User_1 = require("../entities/User");
@@ -30,3 +30,7 @@ const loginUser = async (email, password) => {
     return user;
 };
 exports.loginUser = loginUser;
+const findUserById = async (userId) => {
+    return await userRepo.findOneBy({ id: userId });
+};
+exports.findUserById = findUserById;

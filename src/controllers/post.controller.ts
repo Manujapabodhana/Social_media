@@ -3,11 +3,6 @@ import { createPostService, getPostsService } from "../services/post.service";
 
 export const createPost = async (req: any, res: Response) => {
   try {
-    // Validate required fields
-    if (!req.body.title || !req.body.content) {
-      return res.status(400).json({ message: "Missing required fields: title and content" });
-    }
-
     const post = await createPostService(
       req.user.id,
       req.body.title,
