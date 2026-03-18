@@ -7,4 +7,6 @@ const post_validation_1 = require("../middlewares/post.validation");
 const router = (0, express_1.Router)();
 router.post("/", auth_middleware_1.authMiddleware, post_validation_1.createPostValidation, post_controller_1.createPost);
 router.get("/", post_controller_1.getPosts);
+router.put("/:id", auth_middleware_1.authMiddleware, post_validation_1.postIdValidation, post_validation_1.updatePostValidation, post_controller_1.updatePost);
+router.delete("/:id", auth_middleware_1.authMiddleware, post_validation_1.postIdValidation, post_controller_1.deletePost);
 exports.default = router;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPosts = exports.createPost = void 0;
+exports.deletePost = exports.updatePost = exports.getPosts = exports.createPost = void 0;
 const post_service_1 = require("../services/post.service");
 // @route   POST /api/v1/posts
 // @desc    Create a new post
@@ -30,3 +30,46 @@ const getPosts = async (_req, res) => {
     }
 };
 exports.getPosts = getPosts;
+// @route   PUT /api/v1/posts/:id
+// @desc    Update a post
+// @access  Private (owner only)
+const updatePost = async (req, res) => {
+    try {
+        const postId = Number(req.params.id);
+        const { title, content } = req.body;
+        const post = await (0, post_service_1.updatePostService)(postId, req.user.id, title, content);
+        res.status(200).json({ message: "Post updated successfully", post });
+    }
+    catch (error) {
+        console.error("Error updating post:", error.message);
+        if (error.message === "Post not found") {
+            return res.status(404).json({ message: error.message });
+        }
+        if (error.message === "Not authorized to update this post") {
+            return res.status(403).json({ message: error.message });
+        }
+        res.status(500).json({ message: error.message || "Failed to update post" });
+    }
+};
+exports.updatePost = updatePost;
+// @route   DELETE /api/v1/posts/:id
+// @desc    Delete a post
+// @access  Private (owner only)
+const deletePost = async (req, res) => {
+    try {
+        const postId = Number(req.params.id);
+        await (0, post_service_1.deletePostService)(postId, req.user.id);
+        res.status(200).json({ message: "Post deleted successfully" });
+    }
+    catch (error) {
+        console.error("Error deleting post:", error.message);
+        if (error.message === "Post not found") {
+            return res.status(404).json({ message: error.message });
+        }
+        if (error.message === "Not authorized to delete this post") {
+            return res.status(403).json({ message: error.message });
+        }
+        res.status(500).json({ message: error.message || "Failed to delete post" });
+    }
+};
+exports.deletePost = deletePost;

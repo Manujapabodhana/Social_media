@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPostsService = exports.createPostService = void 0;
+exports.deletePostService = exports.updatePostService = exports.getPostsService = exports.createPostService = void 0;
 const database_1 = require("../config/database");
 const Post_1 = require("../entities/Post");
 const User_1 = require("../entities/User");
@@ -26,3 +26,37 @@ const getPostsService = async () => {
     });
 };
 exports.getPostsService = getPostsService;
+const updatePostService = async (postId, userId, title, content) => {
+    const post = await postRepo.findOne({
+        where: { id: postId },
+        relations: ["user"],
+    });
+    if (!post) {
+        throw new Error("Post not found");
+    }
+    if (!post.user || post.user.id !== userId) {
+        throw new Error("Not authorized to update this post");
+    }
+    if (title !== undefined) {
+        post.title = title;
+    }
+    if (content !== undefined) {
+        post.content = content;
+    }
+    return await postRepo.save(post);
+};
+exports.updatePostService = updatePostService;
+const deletePostService = async (postId, userId) => {
+    const post = await postRepo.findOne({
+        where: { id: postId },
+        relations: ["user"],
+    });
+    if (!post) {
+        throw new Error("Post not found");
+    }
+    if (!post.user || post.user.id !== userId) {
+        throw new Error("Not authorized to delete this post");
+    }
+    await postRepo.remove(post);
+};
+exports.deletePostService = deletePostService;
