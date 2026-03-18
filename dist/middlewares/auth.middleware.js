@@ -6,12 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authMiddleware = (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
+    try {
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
     }
-    const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
+    catch (error) {
+        console.error("Auth error:", error.message);
+        return res.status(401).json({ message: "Invalid or expired token" });
+    }
 };
 exports.authMiddleware = authMiddleware;

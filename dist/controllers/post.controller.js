@@ -1,24 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sharePost = exports.likePost = exports.getPosts = exports.createPost = void 0;
+exports.getPosts = exports.createPost = void 0;
 const post_service_1 = require("../services/post.service");
 const createPost = async (req, res) => {
-    const post = await (0, post_service_1.createPostService)(req.user.id, req.body.content);
-    res.json(post);
+    try {
+        // Validate required fields
+        if (!req.body.title || !req.body.content) {
+            return res.status(400).json({ message: "Missing required fields: title and content" });
+        }
+        const post = await (0, post_service_1.createPostService)(req.user.id, req.body.title, req.body.content);
+        res.status(201).json({ message: "Post created successfully", post });
+    }
+    catch (error) {
+        console.error("Error creating post:", error.message);
+        res.status(500).json({ message: error.message || "Failed to create post" });
+    }
 };
 exports.createPost = createPost;
 const getPosts = async (_req, res) => {
-    const posts = await (0, post_service_1.getAllPostsService)();
-    res.json(posts);
+    try {
+        const posts = await (0, post_service_1.getPostsService)();
+        res.json(posts);
+    }
+    catch (error) {
+        console.error("Error fetching posts:", error.message);
+        res.status(500).json({ message: error.message || "Failed to fetch posts" });
+    }
 };
 exports.getPosts = getPosts;
-const likePost = async (req, res) => {
-    const like = await (0, post_service_1.likePostService)(req.user.id, Number(req.params.postId));
-    res.json(like);
-};
-exports.likePost = likePost;
-const sharePost = async (req, res) => {
-    const share = await (0, post_service_1.sharePostService)(req.user.id, Number(req.params.postId));
-    res.json(share);
-};
-exports.sharePost = sharePost;

@@ -22,7 +22,15 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
+], Post.prototype, "title", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], Post.prototype, "content", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Post.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => User_1.User),
     __metadata("design:type", User_1.User)

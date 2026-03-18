@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import { User } from '../entities/User';
+import { Post } from '../entities/Post';
 
 
 export const AppDataSource = new DataSource({
@@ -10,5 +11,5 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASS || '',
   database: process.env.DB_NAME || 'social_db',
   synchronize: true,
-  entities: [User],
+  entities: [User, Post],
 });
