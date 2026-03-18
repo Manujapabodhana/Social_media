@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { createPostService, getPostsService } from "../services/post.service";
 
+// @route   POST /api/v1/posts
+// @desc    Create a new post
+// @access  Private
 export const createPost = async (req: any, res: Response) => {
   try {
     const post = await createPostService(
@@ -16,6 +19,9 @@ export const createPost = async (req: any, res: Response) => {
   }
 };
 
+// @route   GET /api/v1/posts
+// @desc    Get all posts
+// @access  Public
 export const getPosts = async (_req: Request, res: Response) => {
   try {
     const posts = await getPostsService();

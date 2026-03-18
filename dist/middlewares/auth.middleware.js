@@ -10,14 +10,8 @@ const authMiddleware = (req, res, next) => {
     if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
     }
-    try {
-        const accessTokenSecret = process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET;
-        const decoded = jsonwebtoken_1.default.verify(token, accessTokenSecret);
-        req.user = decoded;
-        next();
-    }
-    catch {
-        return res.status(401).json({ message: "Invalid or expired token" });
-    }
+    const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
 };
 exports.authMiddleware = authMiddleware;

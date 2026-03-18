@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPosts = exports.createPost = void 0;
 const post_service_1 = require("../services/post.service");
+// @route   POST /api/v1/posts
+// @desc    Create a new post
+// @access  Private
 const createPost = async (req, res) => {
     try {
         const post = await (0, post_service_1.createPostService)(req.user.id, req.body.title, req.body.content);
@@ -13,6 +16,9 @@ const createPost = async (req, res) => {
     }
 };
 exports.createPost = createPost;
+// @route   GET /api/v1/posts
+// @desc    Get all posts
+// @access  Public
 const getPosts = async (_req, res) => {
     try {
         const posts = await (0, post_service_1.getPostsService)();

@@ -4,17 +4,18 @@ import postRoutes from "./routes/post.routes";
 
 const app = express();
 
+
 // Middleware
 app.use(express.json());
 
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get("/v1/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // Routes
-app.use("/auth", authRoutes);
-app.use("/posts", postRoutes);
+app.use("/v1/auth", authRoutes);
+app.use("/v1/posts", postRoutes);
 
 // 404 handler
 app.use((req, res) => {

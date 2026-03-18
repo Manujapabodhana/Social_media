@@ -6,6 +6,9 @@ import { User } from "../entities/User";
 
 const userRepo = AppDataSource.getRepository(User);
 
+// @route   POST /api/v1/auth/register
+// @desc    Register a new user
+// @access  Public
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
@@ -25,6 +28,9 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
+// @route   POST /api/v1/auth/login
+// @desc    Login user and generate tokens
+// @access  Public
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -44,6 +50,9 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+// @route   POST /api/v1/auth/refresh
+// @desc    Refresh access token
+// @access  Private
 export const refresh = async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body;
