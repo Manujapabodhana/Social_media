@@ -21,7 +21,15 @@ export const register = async (req: Request, res: Response) => {
     user.refreshToken = refreshToken;
     await userRepo.save(user);
 
-    res.status(201).json({ message: "User registered successfully", user, accessToken, refreshToken });
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = user;
+    
+    res.status(201).json({ 
+      message: "User registered successfully", 
+      user: userWithoutPassword, 
+      accessToken, 
+      refreshToken 
+    });
   } catch (error: any) {
     console.error("Register error:", error);
     res.status(500).json({ message: error.message || "Registration failed" });
@@ -43,7 +51,15 @@ export const login = async (req: Request, res: Response) => {
     user.refreshToken = refreshToken;
     await userRepo.save(user);
 
-    res.status(200).json({ message: "Login successful", user, accessToken, refreshToken });
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = user;
+
+    res.status(200).json({ 
+      message: "Login successful", 
+      user: userWithoutPassword, 
+      accessToken, 
+      refreshToken 
+    });
   } catch (error: any) {
     console.error("Login error:", error);
     res.status(401).json({ message: error.message || "Login failed" });
