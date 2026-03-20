@@ -19,11 +19,42 @@ const createPostService = async (userId, title, content) => {
     return await postRepo.save(post);
 };
 exports.createPostService = createPostService;
-const getPostsService = async () => {
-    return await postRepo.find({
-        relations: ["user"],
-        order: { id: "DESC" }
-    });
+const getPostsService = async (query = {}) => {
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? Math.min(query.limit, 100) : 10;
+    const skip = (page - 1) * limit;
+    const qb = postRepo
+        .createQueryBuilder("post")
+        .leftJoinAndSelect("post.user", "user");
+    // Search in title and content (case-insensitive)
+    if (query.search) {
+        qb.andWhere("(LOWER(post.title) LIKE LOWER(:search) OR LOWER(post.content) LIKE LOWER(:search))", {
+            search: `%${query.search}%`,
+        });
+    }
+    // Filter by userId
+    if (query.userId) {
+        qb.andWhere("user.id = :userId", { userId: query.userId });
+    }
+    // Filter by title
+    if (query.title) {
+        qb.andWhere("LOWER(post.title) LIKE LOWER(:title)", { title: `%${query.title}%` });
+    }
+    qb.orderBy("post.createdAt", "DESC");
+    qb.skip(skip).take(limit);
+    const [posts, total] = await qb.getManyAndCount();
+    const totalPages = Math.ceil(total / limit);
+    return {
+        data: posts,
+        pagination: {
+            total,
+            page,
+            limit,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+        },
+    };
 };
 exports.getPostsService = getPostsService;
 const updatePostService = async (postId, userId, title, content) => {

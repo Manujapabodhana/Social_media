@@ -18,7 +18,14 @@ const register = async (req, res) => {
         // Store refresh token in database
         user.refreshToken = refreshToken;
         await userRepo.save(user);
-        res.status(201).json({ message: "User registered successfully", user, accessToken, refreshToken });
+        // Return user without password
+        const { password: _, ...userWithoutPassword } = user;
+        res.status(201).json({
+            message: "User registered successfully",
+            user: userWithoutPassword,
+            accessToken,
+            refreshToken
+        });
     }
     catch (error) {
         console.error("Register error:", error);
@@ -38,7 +45,14 @@ const login = async (req, res) => {
         // Update refresh token in database
         user.refreshToken = refreshToken;
         await userRepo.save(user);
-        res.status(200).json({ message: "Login successful", user, accessToken, refreshToken });
+        // Return user without password
+        const { password: _, ...userWithoutPassword } = user;
+        res.status(200).json({
+            message: "Login successful",
+            user: userWithoutPassword,
+            accessToken,
+            refreshToken
+        });
     }
     catch (error) {
         console.error("Login error:", error);

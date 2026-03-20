@@ -5,6 +5,14 @@ import { User } from "../entities/User";
 const postRepo = AppDataSource.getRepository(Post);
 const userRepo = AppDataSource.getRepository(User);
 
+export interface GetPostsQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+  userId?: number;
+  title?: string;
+}
+
 export const createPostService = async (
   userId: number,
   title: string,
@@ -26,13 +34,49 @@ export const createPostService = async (
   return await postRepo.save(post);
 };
 
-export const getPostsService = async () => {
+export const getPostsService = async (query: GetPostsQuery = {}) => {
+  const page = query.page && query.page > 0 ? query.page : 1;
+  const limit = query.limit && query.limit > 0 ? Math.min(query.limit, 100) : 10;
+  const skip = (page - 1) * limit;
 
-  return await postRepo.find({
-    relations: ["user"],
-    order: { id: "DESC" }
-  });
+  const qb = postRepo
+    .createQueryBuilder("post")
+    .leftJoinAndSelect("post.user", "user");
 
+  // Search in title and content (case-insensitive)
+  if (query.search) {
+    qb.andWhere("(LOWER(post.title) LIKE LOWER(:search) OR LOWER(post.content) LIKE LOWER(:search))", {
+      search: `%${query.search}%`,
+    });
+  }
+
+  // Filter by userId
+  if (query.userId) {
+    qb.andWhere("user.id = :userId", { userId: query.userId });
+  }
+
+  // Filter by title
+  if (query.title) {
+    qb.andWhere("LOWER(post.title) LIKE LOWER(:title)", { title: `%${query.title}%` });
+  }
+
+  qb.orderBy("post.createdAt", "DESC");
+  qb.skip(skip).take(limit);
+
+  const [posts, total] = await qb.getManyAndCount();
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data: posts,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
 };
 
 export const updatePostService = async (
